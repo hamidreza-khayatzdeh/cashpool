@@ -75,17 +75,15 @@ public class Traveler extends Auditable<String> implements Serializable {
 
         Traveler traveler = (Traveler) o;
 
-        if (!id.equals(traveler.id)) return false;
         if (!name.equals(traveler.name)) return false;
-        return email.equals(traveler.email);
+        return email != null ? email.equals(traveler.email) : traveler.email == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + email.hashCode();
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;
     }
 }

@@ -127,23 +127,21 @@ public class Trip extends Auditable<String> implements Serializable {
 
         Trip trip = (Trip) o;
 
-        if (!id.equals(trip.id)) return false;
-        if (!name.equals(trip.name)) return false;
-        if (!link.equals(trip.link)) return false;
+        if (name != null ? !name.equals(trip.name) : trip.name != null) return false;
+        if (link != null ? !link.equals(trip.link) : trip.link != null) return false;
         if (status != trip.status) return false;
-        if (!totalCost.equals(trip.totalCost)) return false;
-        return share.equals(trip.share);
+        if (totalCost != null ? !totalCost.equals(trip.totalCost) : trip.totalCost != null) return false;
+        return share != null ? share.equals(trip.share) : trip.share == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + link.hashCode();
-        result = 31 * result + status.hashCode();
-        result = 31 * result + totalCost.hashCode();
-        result = 31 * result + share.hashCode();
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (link != null ? link.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (totalCost != null ? totalCost.hashCode() : 0);
+        result = 31 * result + (share != null ? share.hashCode() : 0);
         return result;
     }
 }
