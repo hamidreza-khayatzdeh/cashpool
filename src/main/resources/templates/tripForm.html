@@ -1,0 +1,30 @@
+<div class="container" xmlns:th="http://www.w3.org/1999/xhtml" th:fragment="content">
+    <div class="row main">
+        <div class="panel-heading">
+            <div class="panel-title text-center">
+                <h1 class="title">Trip Form</h1>
+                <hr/>
+            </div>
+        </div>
+        <div class="main-login main-center">
+            <form class="form-horizontal" action="#" th:action="@{'/trip/' + ${action}}" th:object="${trip}" method="post">
+                <input name="id" id="id" type="hidden" th:value="${trip.id}">
+                <div class="form-group">
+                    <label for="name" class="cols-sm-2 control-label">Trip Name</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                            <input th:value="${trip.name}" type="text" class="form-control" name="name" id="name" placeholder="Enter Trip Name"
+                                   th:field="*{name}"/>
+                        </div>
+                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                    </div>
+                </div>
+
+                <div class="login-register">
+                    <button class="btn btn-sm btn-primary btn-create" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
