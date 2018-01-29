@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -14,8 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "TRAVELER")
-public class Traveler extends Auditable<String> implements Serializable {
-    private static final long serialVersionUID = -987689979828936913L;
+public class Traveler extends Auditable<String> {
 
     private Long id;
     @NotBlank

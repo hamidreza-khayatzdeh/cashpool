@@ -7,14 +7,14 @@
             </div>
         </div>
         <div class="main-login main-center">
-            <form class="form-horizontal" action="#" th:action="@{'/traveler/' + ${action}}" th:object="${traveler}" method="post">
-                <input name="id" id="id" type="hidden" th:value="${traveler.id}">
+            <form class="form-horizontal" action="#" th:action="@{'/traveler/' + ${action}}" th:object="${travelerDto}" method="post">
+                <input name="id" id="id" type="hidden" th:value="${travelerDto.id}">
                 <div class="form-group">
                     <label for="name" class="cols-sm-2 control-label">Your Name</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input th:value="${traveler.name}" type="text" class="form-control" name="name" id="name" placeholder="Enter your Name"
+                            <input th:value="${travelerDto.name}" type="text" class="form-control" name="name" id="name" placeholder="Enter your Name"
                                    th:field="*{name}"/>
                         </div>
                         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
@@ -26,7 +26,7 @@
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
-                            <input th:value="${traveler.email}" type="text" class="form-control" name="email" id="email"
+                            <input th:value="${travelerDto.email}" type="text" class="form-control" name="email" id="email"
                                    placeholder="Enter your Email"/>
                         </div>
                         <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>

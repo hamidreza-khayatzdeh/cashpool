@@ -1,21 +1,30 @@
 package com.invia.challenge.cashpool.model;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by khayatzadeh on 1/24/2018.
  */
 @Entity
 @Table(name = "TRIP_TRAVELER_REL")
-public class TripTravelerRel extends Auditable<String> implements Serializable {
-    private static final long serialVersionUID = 4412272369544644344L;
+public class TripTravelerRel extends Auditable<String> {
 
     private Long id;
     private Traveler traveler;
     private Trip trip;
-    private BigDecimal spentAmount;
+    private BigDecimal totalSpentAmount;
+    private String description;
+    private List<Expense> expenses;
+
+    private TripTravelerRel() {
+    }
+
+    public TripTravelerRel(Traveler traveler, Trip trip) {
+        this.traveler = traveler;
+        this.trip = trip;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +36,7 @@ public class TripTravelerRel extends Auditable<String> implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne(targetEntity = Traveler.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Traveler.class)
     @JoinColumn(name = "TRAVELER_ID", nullable = false)
     public Traveler getTraveler() {
         return traveler;
@@ -37,7 +46,7 @@ public class TripTravelerRel extends Auditable<String> implements Serializable {
         this.traveler = traveler;
     }
 
-    @ManyToOne(targetEntity = Trip.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Trip.class)
     @JoinColumn(name = "TRIP_ID", nullable = false)
     public Trip getTrip() {
         return trip;
@@ -47,12 +56,30 @@ public class TripTravelerRel extends Auditable<String> implements Serializable {
         this.trip = trip;
     }
 
-    @Column(name = "SPENT_AMOUNT")
-    public BigDecimal getSpentAmount() {
-        return spentAmount;
+    @Column(name = "TOTAL_SPENT_AMOUNT")
+    public BigDecimal getTotalSpentAmount() {
+        return totalSpentAmount;
     }
 
-    public void setSpentAmount(BigDecimal spentAmount) {
-        this.spentAmount = spentAmount;
+    public void setTotalSpentAmount(BigDecimal totalSpentAmount) {
+        this.totalSpentAmount = totalSpentAmount;
+    }
+
+    @Column(name = "DESCRIPTION")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @OneToMany(mappedBy = "tripTravelerRel")
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
     }
 }

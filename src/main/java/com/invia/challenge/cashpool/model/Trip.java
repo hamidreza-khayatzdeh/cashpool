@@ -3,9 +3,11 @@ package com.invia.challenge.cashpool.model;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,8 +16,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "TRIP")
-public class Trip extends Auditable<String> implements Serializable {
-    private static final long serialVersionUID = -8102803221454380692L;
+public class Trip extends Auditable<String> {
 
     private Trip() {
     }
@@ -40,14 +41,12 @@ public class Trip extends Auditable<String> implements Serializable {
     }
 
     private Long id;
-    @NotBlank
-    @Size(min = 2, max = 255)
     private String name;
     private String link;
     private Status status;
     private BigDecimal totalCost;
     private BigDecimal share;
-    private Set<TripTravelerRel> tripTravelerRels;
+    private Set<TripTravelerRel> tripTravelerRels = new HashSet<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -116,7 +115,7 @@ public class Trip extends Auditable<String> implements Serializable {
     @PrePersist
     public void prePersist() {
         UUID uuid = UUID.randomUUID();
-        this.setLink(this.getName().replaceAll("\\s", "")+ "_" + String.format("%s",uuid.toString()));
+        this.setLink(this.getName().replaceAll("\\s.", "")+ "_" + String.format("%s",uuid.toString()));
         this.setStatus(Status.STARTED);
     }
 

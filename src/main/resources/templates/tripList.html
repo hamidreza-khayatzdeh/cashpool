@@ -44,7 +44,9 @@
                             <script th:inline="javascript">
                                 /*<![CDATA[*/
                                 var link = [[${item.link}]];
+                                console.log(link);
                                 var retrievalLink = document.location.origin + "/trip/link/" + link;
+                                console.log(retrievalLink);
                                 $("#" + link).attr("href", retrievalLink);
                                 $("#" + link).html(retrievalLink);
                                 /*]]>*/

@@ -70,7 +70,7 @@ public class TravelerControllerTest extends CashpoolApplicationTest {
 
     @Test
     public void getAllTravelersTest() throws Exception {
-        mockMvc.perform(get(URL_PREFIX + "/getAll"))
+        mockMvc.perform(get(URL_PREFIX + "/getTrips"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$", hasSize(3)))

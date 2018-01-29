@@ -4,6 +4,7 @@ import com.invia.challenge.cashpool.exception.CashpoolBaseException;
 import com.invia.challenge.cashpool.interceptor.Layout;
 import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.service.TravelerService;
+import com.invia.challenge.cashpool.service.dto.TravelerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,32 +33,45 @@ public class TravelerController extends WebMvcConfigurerAdapter {
     }
 
     @GetMapping("/persist")
-    public String showForm(Traveler traveler, Model model) {
+    public String showForm(TravelerDto travelerDto, Model model) {
         model.addAttribute("action", "persist");
+        model.addAttribute("traveler", travelerDto);
         return "travelerForm";
     }
 
     @PostMapping("/persist")
-    public String persist(@Valid @ModelAttribute Traveler traveler, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
+    public String persist(@Valid @ModelAttribute TravelerDto travelerDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("action", "persist");
             return "travelerForm";
-        travelerService.persist(traveler);
+        }
+        travelerService.persist(travelerDto);
         return "redirect:/traveler/list";
     }
 
     @PostMapping("/update")
-    public String update(@Valid @ModelAttribute Traveler traveler, BindingResult bindingResult) throws CashpoolBaseException {
-        if (bindingResult.hasErrors())
+    public String update(@Valid @ModelAttribute TravelerDto travelerDto, BindingResult bindingResult, Model model) throws CashpoolBaseException {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("action", "update");
             return "travelerForm";
-        travelerService.update(traveler.getId(), traveler);
+        }
+        travelerService.update(travelerDto.getId(), travelerDto);
         return "redirect:/traveler/list";
     }
 
     @GetMapping("/list")
     public String list(Model model) {
-        List<Traveler> travelers = travelerService.getAll();
+        List<TravelerDto> travelers = travelerService.getAll();
         model.addAttribute("travelers", travelers);
         return "travelerList";
+    }
+
+    private TravelerDto getTravelerDto(Traveler traveler) {
+        TravelerDto travelerDto = new TravelerDto();
+        travelerDto.setId(traveler.getId());
+        travelerDto.setName(traveler.getName());
+        travelerDto.setEmail(traveler.getEmail());
+        return travelerDto;
     }
 
     @GetMapping("/delete/{id}")
@@ -67,8 +82,8 @@ public class TravelerController extends WebMvcConfigurerAdapter {
 
     @GetMapping("/get/{id}")
     public String get(@PathVariable(value = "id") Long id, Model model) throws CashpoolBaseException {
-        Traveler traveler = travelerService.get(id);
-        model.addAttribute("traveler", traveler);
+        TravelerDto travelerDto = travelerService.get(id);
+        model.addAttribute("travelerDto", travelerDto);
         model.addAttribute("action", "update");
         return "travelerForm";
     }

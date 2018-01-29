@@ -4,10 +4,14 @@ import com.invia.challenge.cashpool.exception.CashpoolBaseException;
 import com.invia.challenge.cashpool.exception.TravelerNotFoundException;
 import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.repository.TravelerRepository;
+import com.invia.challenge.cashpool.service.dto.Converter;
+import com.invia.challenge.cashpool.service.dto.TravelerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by khayatzadeh on 1/23/2018.
@@ -18,23 +22,27 @@ public class TravelerService {
     @Autowired
     private TravelerRepository travelerRepository;
 
-    public void persist(Traveler traveler) {
+    public void persist(TravelerDto travelerDto) {
+        Traveler traveler = Converter.getTraveler(travelerDto);
         travelerRepository.save(traveler);
     }
 
-    public List<Traveler> getAll() {
-        return travelerRepository.findAll();
+    public List<TravelerDto> getAll() {
+        List<Traveler> travelers = travelerRepository.findAll();
+        return travelers.stream().map(Converter::getTravelerDto).collect(Collectors.toList());
     }
 
-    public Traveler get(Long id) throws CashpoolBaseException {
-        return getTravelerById(id);
+    public TravelerDto get(Long id) throws CashpoolBaseException {
+        Traveler traveler = getTravelerById(id);
+        return Converter.getTravelerDto(traveler);
     }
 
-    public Traveler update(Long id, Traveler traveler) throws CashpoolBaseException {
+    public TravelerDto update(Long id, TravelerDto travelerDto) throws CashpoolBaseException {
         Traveler loadedTraveler = getTravelerById(id);
-        loadedTraveler.setName(traveler.getName());
-        loadedTraveler.setEmail(traveler.getEmail());
-        return travelerRepository.save(loadedTraveler);
+        loadedTraveler.setName(travelerDto.getName());
+        loadedTraveler.setEmail(travelerDto.getEmail());
+        travelerRepository.save(loadedTraveler);
+        return Converter.getTravelerDto(loadedTraveler);
     }
 
     private Traveler getTravelerById(Long id) throws CashpoolBaseException {

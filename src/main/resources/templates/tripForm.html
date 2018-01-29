@@ -7,20 +7,46 @@
             </div>
         </div>
         <div class="main-login main-center">
-            <form class="form-horizontal" action="#" th:action="@{'/trip/' + ${action}}" th:object="${trip}" method="post">
-                <input name="id" id="id" type="hidden" th:value="${trip.id}">
+            <form class="form-horizontal" action="#" th:action="@{'/trip/' + ${action}}" th:object="${tripDto}" method="post">
+                <input name="id" id="id" type="hidden" th:value="${tripDto.id}">
                 <div class="form-group">
                     <label for="name" class="cols-sm-2 control-label">Trip Name</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input th:value="${trip.name}" type="text" class="form-control" name="name" id="name" placeholder="Enter Trip Name"
+                            <input th:value="${tripDto.name}" type="text" class="form-control" name="name" id="name" placeholder="Enter Trip Name"
                                    th:field="*{name}"/>
                         </div>
                         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
                     </div>
                 </div>
-
+                <div class="form-group">
+                    <label for="name" class="cols-sm-2 control-label">Travelers</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                            <select th:field="*{travelers}" multiple="multiple" class="selectpicker" data-width="fit">
+                                    <option
+                                            th:each="traveler : ${allTravelers}"
+                                            th:value="${traveler.id}"
+                                            th:text="${traveler.name}"></option>
+                            </select>
+                        </div>
+                        <span th:if="${#fields.hasErrors('travelers')}" th:errors="*{travelers}"></span>
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            $(document).ready(function(){
+                                var travelers = [[${tripDto.travelers}]];
+                                var selectedItems = [];
+                                $.each(travelers, function(index, traveler) {
+                                    selectedItems.push(traveler.id);
+                                });
+                                $('.selectpicker').selectpicker('val', selectedItems);
+                            });
+                            /*]]>*/
+                        </script>
+                    </div>
+                </div>
                 <div class="login-register">
                     <button class="btn btn-sm btn-primary btn-create" type="submit">Submit</button>
                 </div>

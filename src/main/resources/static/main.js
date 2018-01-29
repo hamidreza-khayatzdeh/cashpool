@@ -3,4 +3,6 @@ $(document).ready(function () {
         rootSelector: '[data-toggle=confirmation]',
         singleton:true
     });
+
+    $('.selectpicker').selectpicker();
 });
