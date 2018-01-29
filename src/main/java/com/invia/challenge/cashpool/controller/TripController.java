@@ -4,6 +4,8 @@ import com.invia.challenge.cashpool.exception.CashpoolBaseException;
 import com.invia.challenge.cashpool.interceptor.Layout;
 import com.invia.challenge.cashpool.service.TravelerService;
 import com.invia.challenge.cashpool.service.TripService;
+import com.invia.challenge.cashpool.service.dto.Converter;
+import com.invia.challenge.cashpool.service.dto.ExpenseDto;
 import com.invia.challenge.cashpool.service.dto.TravelerDto;
 import com.invia.challenge.cashpool.service.dto.TripDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by khayatzadeh on 1/24/2018.
@@ -96,8 +96,30 @@ public class TripController extends WebMvcConfigurerAdapter {
     @GetMapping("/link/{link}")
     public String link(@PathVariable(value = "link") String link, Model model) throws CashpoolBaseException {
         TripDto tripDto = tripService.getByLink(link);
-        model.addAttribute("tripDto", tripDto);
-        model.addAttribute("action", "update");
+        model.addAttribute("expenseDto", Converter.getExpenseDto(tripDto));
         return "tripLink";
     }
+
+    @GetMapping("/expense/{id}")
+    public String expense(@PathVariable(value = "id") Long id, Model model) throws CashpoolBaseException {
+        TripDto tripDto = tripService.get(id);
+        model.addAttribute("expenseDto", Converter.getExpenseDto(tripDto));
+        model.addAttribute("tripDto", tripDto);
+        return "tripLink";
+    }
+
+    @PostMapping("/addExpense")
+    public String addExpense(@Valid @ModelAttribute ExpenseDto expenseDto, BindingResult bindingResult, Model model) throws CashpoolBaseException {
+        if (bindingResult.hasErrors()) {
+            TripDto tripDto = tripService.get(expenseDto.getTripId());
+            expenseDto.setAllTravelers(tripDto.getTravelers());
+            expenseDto.setTripName(tripDto.getName());
+            model.addAttribute("tripDto", tripDto);
+            return "tripLink";
+        }
+        tripService.addExpense(expenseDto);
+        return "redirect:/trip/list";
+    }
+
+
 }

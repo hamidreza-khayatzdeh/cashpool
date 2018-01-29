@@ -3,6 +3,7 @@ package com.invia.challenge.cashpool.service;
 import com.invia.challenge.cashpool.exception.CashpoolBaseException;
 import com.invia.challenge.cashpool.exception.TravelerNotFoundException;
 import com.invia.challenge.cashpool.model.Traveler;
+import com.invia.challenge.cashpool.model.TripTravelerRel;
 import com.invia.challenge.cashpool.repository.TravelerRepository;
 import com.invia.challenge.cashpool.service.dto.Converter;
 import com.invia.challenge.cashpool.service.dto.TravelerDto;
@@ -54,4 +55,5 @@ public class TravelerService {
         Traveler traveler = getTravelerById(id);
         travelerRepository.delete(traveler);
     }
+
 }

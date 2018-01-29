@@ -3,12 +3,15 @@ package com.invia.challenge.cashpool.service;
 
 import com.invia.challenge.cashpool.exception.CashpoolBaseException;
 import com.invia.challenge.cashpool.exception.TripNotFoundException;
+import com.invia.challenge.cashpool.model.Expense;
 import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.model.Trip;
 import com.invia.challenge.cashpool.model.TripTravelerRel;
+import com.invia.challenge.cashpool.repository.ExpenseRepository;
 import com.invia.challenge.cashpool.repository.TripRepository;
 import com.invia.challenge.cashpool.repository.TripTravelerRelRepository;
 import com.invia.challenge.cashpool.service.dto.Converter;
+import com.invia.challenge.cashpool.service.dto.ExpenseDto;
 import com.invia.challenge.cashpool.service.dto.TravelerDto;
 import com.invia.challenge.cashpool.service.dto.TripDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,12 @@ public class TripService {
 
     @Autowired
     private TripTravelerRelRepository tripTravelerRelRepository;
+
+    @Autowired
+    private TravelerService travelerService;
+
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
     public void persist(TripDto tripDto) {
         Trip trip = new Trip(tripDto.getName());
@@ -62,7 +71,14 @@ public class TripService {
 
     public TripDto get(Long id) throws CashpoolBaseException {
         Trip trip = getTripById(id);
-        return Converter.getTripDto(trip);
+        TripDto tripDto = Converter.getTripDto(trip);
+        if (!CollectionUtils.isEmpty(trip.getTripTravelerRels())) {
+            for (TripTravelerRel tripTravelerRel : trip.getTripTravelerRels()) {
+                tripDto.getTravelers().add(Converter.getTravelerDto(tripTravelerRel.getTraveler()));
+                tripDto.getExpenses().addAll(getExpenses(tripTravelerRel.getId()));
+            }
+        }
+        return tripDto;
     }
 
     public TripDto getByLink(String link) {
@@ -97,4 +113,30 @@ public class TripService {
         tripRepository.delete(Trip);
     }
 
+    public void addExpense(ExpenseDto expenseDto) throws CashpoolBaseException {
+        Trip trip = getTripById(expenseDto.getTripId());
+        TravelerDto travelerDto = travelerService.get(expenseDto.getTravelerId());
+        Traveler traveler = Converter.getTraveler(travelerDto);
+        TripTravelerRel tripTravelerRel = tripTravelerRelRepository.findByTripAndTraveler(trip, traveler);
+        Expense expense = new Expense();
+        expense.setTripTravelerRel(tripTravelerRel);
+        expense.setDescription(expenseDto.getDescription());
+        expense.setAmount(expenseDto.getAmount());
+        expenseRepository.save(expense);
+    }
+
+
+    public List<ExpenseDto> getExpenses(Long tripTravelerRelId) throws CashpoolBaseException {
+        TripTravelerRel tripTravelerRel = tripTravelerRelRepository.findById(tripTravelerRelId).orElseThrow(
+                () -> new CashpoolBaseException(String.format("The is not TripTravelerRel with id %s", tripTravelerRelId)));
+        List<Expense> expenses = tripTravelerRel.getExpenses();
+        List<ExpenseDto> expenseDtoList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(expenses)) {
+            for (Expense expense : expenses) {
+                ExpenseDto expenseDto = Converter.getExpenseDto(tripTravelerRel.getTrip(), tripTravelerRel.getTraveler(), expense);
+                expenseDtoList.add(expenseDto);
+            }
+        }
+        return expenseDtoList;
+    }
 }

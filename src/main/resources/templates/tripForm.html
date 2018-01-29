@@ -21,11 +21,11 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="name" class="cols-sm-2 control-label">Travelers</label>
+                    <label for="travelers" class="cols-sm-2 control-label">Travelers</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <select th:field="*{travelers}" multiple="multiple" class="selectpicker" data-width="fit">
+                            <select id="travelers" th:field="*{travelers}" multiple="multiple" class="selectpicker" data-width="fit">
                                     <option
                                             th:each="traveler : ${allTravelers}"
                                             th:value="${traveler.id}"

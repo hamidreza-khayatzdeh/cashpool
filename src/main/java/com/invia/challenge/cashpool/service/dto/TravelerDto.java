@@ -6,13 +6,15 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by khayatzadeh on 1/25/2018.
  */
 public class TravelerDto implements Serializable {
 
-    private static final String NAME_PATTERN = "^[a-zA-Z\\\\s]+";
+    private static final String NAME_PATTERN = "^[a-zA-Z\\s0-9.-]+";
 
     private Long id;
     @NotBlank
@@ -52,5 +54,4 @@ public class TravelerDto implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
-
 }

@@ -7,7 +7,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,7 +17,7 @@ import java.util.Set;
  */
 public class TripDto implements Serializable {
 
-    private static final String NAME_PATTERN = "^[a-zA-Z\\\\s]+";
+    private static final String NAME_PATTERN = "^[a-zA-Z\\s0-9.-]+";
 
     private Long id;
     @NotBlank
@@ -26,6 +28,7 @@ public class TripDto implements Serializable {
     private Trip.Status status;
     private BigDecimal totalCost;
     private Set<TravelerDto> travelers = new HashSet<>();
+    private List<ExpenseDto> expenses = new ArrayList<>();
 
     public TripDto() {
     }
@@ -80,5 +83,13 @@ public class TripDto implements Serializable {
 
     public void setTravelers(Set<TravelerDto> travelers) {
         this.travelers = travelers;
+    }
+
+    public List<ExpenseDto> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<ExpenseDto> expenses) {
+        this.expenses = expenses;
     }
 }
