@@ -15,6 +15,7 @@ import com.invia.challenge.cashpool.service.dto.ExpenseDto;
 import com.invia.challenge.cashpool.service.dto.TravelerDto;
 import com.invia.challenge.cashpool.service.dto.TripDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -69,7 +70,7 @@ public class TripService {
         return tripDtos;
     }
 
-    public TripDto get(Long id) throws CashpoolBaseException {
+    public TripDto getById(Long id) throws CashpoolBaseException {
         Trip trip = getTripById(id);
         TripDto tripDto = Converter.getTripDto(trip);
         if (!CollectionUtils.isEmpty(trip.getTripTravelerRels())) {
@@ -81,7 +82,7 @@ public class TripService {
         return tripDto;
     }
 
-    public TripDto getByLink(String link) {
+    public TripDto getByLink(String link) throws CashpoolBaseException {
         Trip trip = getTripByLink(link);
         return Converter.getTripDto(trip);
     }
@@ -100,17 +101,21 @@ public class TripService {
 
     private Trip getTripById(Long id) throws CashpoolBaseException {
         return tripRepository.findById(id).orElseThrow(
-                () -> new TripNotFoundException("id = ".concat(id.toString())));
+                () -> new TripNotFoundException(String.format("There is not any Trip with id %s", String.valueOf(id))));
     }
 
-    private Trip getTripByLink(String link) {
+    private Trip getTripByLink(String link) throws CashpoolBaseException {
         return tripRepository.findByLink(link).orElseThrow(
-                () -> new TripNotFoundException("link = ".concat(link)));
+                () -> new TripNotFoundException(String.format("There is not any Trip with link %s", link)));
     }
 
     public void delete(Long id) throws CashpoolBaseException {
         Trip Trip = getTripById(id);
-        tripRepository.delete(Trip);
+        try {
+            tripRepository.delete(Trip);
+        } catch (DataIntegrityViolationException e) {
+            throw new CashpoolBaseException(String.format("The Trip with id %s cannot be removed due to unique constraint matters", id));
+        }
     }
 
     public void addExpense(ExpenseDto expenseDto) throws CashpoolBaseException {

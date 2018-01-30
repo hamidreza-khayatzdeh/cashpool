@@ -3,14 +3,14 @@ package com.invia.challenge.cashpool.service;
 import com.invia.challenge.cashpool.exception.CashpoolBaseException;
 import com.invia.challenge.cashpool.exception.TravelerNotFoundException;
 import com.invia.challenge.cashpool.model.Traveler;
-import com.invia.challenge.cashpool.model.TripTravelerRel;
 import com.invia.challenge.cashpool.repository.TravelerRepository;
 import com.invia.challenge.cashpool.service.dto.Converter;
 import com.invia.challenge.cashpool.service.dto.TravelerDto;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,12 +48,16 @@ public class TravelerService {
 
     private Traveler getTravelerById(Long id) throws CashpoolBaseException {
         return travelerRepository.findById(id).orElseThrow(
-                () -> new TravelerNotFoundException("id = ".concat(id.toString())));
+                () -> new TravelerNotFoundException(String.format("The Traveler with Id %s not found", id)));
     }
 
     public void delete(Long id) throws CashpoolBaseException {
         Traveler traveler = getTravelerById(id);
-        travelerRepository.delete(traveler);
+        try {
+            travelerRepository.delete(traveler);
+        } catch (DataIntegrityViolationException e) {
+            throw new CashpoolBaseException(String.format("The Traveler with id %s cannot be removed due to unique constraint matters", id));
+        }
     }
 
 }

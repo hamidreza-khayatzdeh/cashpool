@@ -5,7 +5,18 @@ package com.invia.challenge.cashpool.exception;
  */
 public class CashpoolBaseException extends Exception {
 
+    private String viewName;
+
+    public String getViewName() {
+        return viewName;
+    }
+
     public CashpoolBaseException() {
+    }
+
+    public CashpoolBaseException(String viewName, String message, Throwable cause) {
+        super(message, cause);
+        this.viewName = viewName;
     }
 
     public CashpoolBaseException(String message) {
@@ -23,4 +34,6 @@ public class CashpoolBaseException extends Exception {
     public CashpoolBaseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
+
+
 }

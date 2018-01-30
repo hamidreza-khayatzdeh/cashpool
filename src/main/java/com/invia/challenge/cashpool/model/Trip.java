@@ -115,7 +115,7 @@ public class Trip extends Auditable<String> {
     @PrePersist
     public void prePersist() {
         UUID uuid = UUID.randomUUID();
-        this.setLink(this.getName().replaceAll("\\s.", "")+ "_" + String.format("%s",uuid.toString()));
+        this.setLink(this.getName().replaceAll("[\\s .]", "")+ "_" + String.format("%s",uuid.toString()));
         this.setStatus(Status.STARTED);
     }
 

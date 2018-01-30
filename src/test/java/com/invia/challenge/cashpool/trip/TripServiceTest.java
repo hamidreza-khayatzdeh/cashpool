@@ -1,6 +1,7 @@
 package com.invia.challenge.cashpool.trip;
 
 import com.invia.challenge.cashpool.CashpoolApplicationTest;
+import com.invia.challenge.cashpool.exception.CashpoolBaseException;
 import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.model.Trip;
 import com.invia.challenge.cashpool.model.TripTravelerRel;
@@ -51,7 +52,7 @@ public class TripServiceTest extends CashpoolApplicationTest {
     }
 
     @Test
-    public void getTripByLinkTest() {
+    public void getTripByLinkTest() throws CashpoolBaseException {
         TripDto loadedTrip = tripService.getByLink(trip.getLink());
         Assert.isTrue(loadedTrip.getLink().equals(trip.getLink()), "The loaded trip's link is not equal to persisted one");
     }

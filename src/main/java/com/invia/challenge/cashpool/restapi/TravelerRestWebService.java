@@ -31,7 +31,7 @@ public class TravelerRestWebService {
         return travelerService.getAll();
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/getById/{id}")
     public ResponseEntity<TravelerDto> get(@PathVariable(value = "id") Long id) throws CashpoolBaseException {
         TravelerDto traveler = travelerService.get(id);
         return ResponseEntity.ok(traveler);

@@ -1,11 +1,14 @@
 package com.invia.challenge.cashpool.controller;
 
 import com.invia.challenge.cashpool.exception.CashpoolBaseException;
+import com.invia.challenge.cashpool.exception.CashpoolWithViewException;
+import com.invia.challenge.cashpool.exception.TravelerNotFoundException;
 import com.invia.challenge.cashpool.interceptor.Layout;
 import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.service.TravelerService;
 import com.invia.challenge.cashpool.service.dto.TravelerDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -55,8 +58,14 @@ public class TravelerController extends WebMvcConfigurerAdapter {
             model.addAttribute("action", "update");
             return "travelerForm";
         }
-        travelerService.update(travelerDto.getId(), travelerDto);
-        return "redirect:/traveler/list";
+        try {
+            travelerService.update(travelerDto.getId(), travelerDto);
+            return "redirect:/traveler/list";
+        } catch (TravelerNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        } catch (CashpoolBaseException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.ErrorPage, e.getMessage(), e.getCause());
+        }
     }
 
     @GetMapping("/list")
@@ -76,16 +85,28 @@ public class TravelerController extends WebMvcConfigurerAdapter {
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable(value = "id") Long id) throws CashpoolBaseException {
-        travelerService.delete(id);
-        return "redirect:/traveler/list";
+        try {
+            travelerService.delete(id);
+            return "redirect:/traveler/list";
+        } catch (TravelerNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        } catch (CashpoolBaseException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.ErrorPage, e.getMessage(), e.getCause());
+        }
     }
 
     @GetMapping("/get/{id}")
     public String get(@PathVariable(value = "id") Long id, Model model) throws CashpoolBaseException {
-        TravelerDto travelerDto = travelerService.get(id);
-        model.addAttribute("travelerDto", travelerDto);
-        model.addAttribute("action", "update");
-        return "travelerForm";
+        try {
+            TravelerDto travelerDto = travelerService.get(id);
+            model.addAttribute("travelerDto", travelerDto);
+            model.addAttribute("action", "update");
+            return "travelerForm";
+        } catch (TravelerNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        } catch (CashpoolBaseException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.ErrorPage, e.getMessage(), e.getCause());
+        }
     }
 
 }

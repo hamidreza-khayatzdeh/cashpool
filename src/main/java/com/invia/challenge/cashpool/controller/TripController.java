@@ -1,6 +1,8 @@
 package com.invia.challenge.cashpool.controller;
 
 import com.invia.challenge.cashpool.exception.CashpoolBaseException;
+import com.invia.challenge.cashpool.exception.CashpoolWithViewException;
+import com.invia.challenge.cashpool.exception.TripNotFoundException;
 import com.invia.challenge.cashpool.interceptor.Layout;
 import com.invia.challenge.cashpool.service.TravelerService;
 import com.invia.challenge.cashpool.service.TripService;
@@ -66,8 +68,12 @@ public class TripController extends WebMvcConfigurerAdapter {
             model.addAttribute("allTravelers", travelers);
             return "tripForm";
         }
-        tripService.update(tripDto.getId(), tripDto);
-        return "redirect:/trip/list";
+        try {
+            tripService.update(tripDto.getId(), tripDto);
+            return "redirect:/trip/list";
+        } catch (TripNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        }
     }
 
     @GetMapping("/list")
@@ -79,30 +85,46 @@ public class TripController extends WebMvcConfigurerAdapter {
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable(value = "id") Long id) throws CashpoolBaseException {
-        tripService.delete(id);
-        return "redirect:/trip/list";
+        try {
+            tripService.delete(id);
+            return "redirect:/trip/list";
+        } catch (TripNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        } catch (CashpoolBaseException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.ErrorPage, e.getMessage(), e.getCause());
+        }
     }
 
     @GetMapping("/get/{id}")
     public String get(@PathVariable(value = "id") Long id, Model model) throws CashpoolBaseException {
-        TripDto tripDto = tripService.get(id);
-        List<TravelerDto> travelers = travelerService.getAll();
-        model.addAttribute("allTravelers", travelers);
-        model.addAttribute("tripDto", tripDto);
-        model.addAttribute("action", "update");
-        return "tripForm";
+        TripDto tripDto = null;
+        try {
+            tripDto = tripService.getById(id);
+            List<TravelerDto> travelers = travelerService.getAll();
+            model.addAttribute("allTravelers", travelers);
+            model.addAttribute("tripDto", tripDto);
+            model.addAttribute("action", "update");
+            return "tripForm";
+        } catch (TripNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        }
     }
 
     @GetMapping("/link/{link}")
     public String link(@PathVariable(value = "link") String link, Model model) throws CashpoolBaseException {
-        TripDto tripDto = tripService.getByLink(link);
-        model.addAttribute("expenseDto", Converter.getExpenseDto(tripDto));
-        return "tripLink";
+        try {
+            TripDto tripDto = tripService.getByLink(link);
+            model.addAttribute("expenseDto", Converter.getExpenseDto(tripDto));
+            model.addAttribute("tripDto", tripDto);
+            return "tripLink";
+        } catch (TripNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        }
     }
 
     @GetMapping("/expense/{id}")
     public String expense(@PathVariable(value = "id") Long id, Model model) throws CashpoolBaseException {
-        TripDto tripDto = tripService.get(id);
+        TripDto tripDto = tripService.getById(id);
         model.addAttribute("expenseDto", Converter.getExpenseDto(tripDto));
         model.addAttribute("tripDto", tripDto);
         return "tripLink";
@@ -111,7 +133,7 @@ public class TripController extends WebMvcConfigurerAdapter {
     @PostMapping("/addExpense")
     public String addExpense(@Valid @ModelAttribute ExpenseDto expenseDto, BindingResult bindingResult, Model model) throws CashpoolBaseException {
         if (bindingResult.hasErrors()) {
-            TripDto tripDto = tripService.get(expenseDto.getTripId());
+            TripDto tripDto = tripService.getById(expenseDto.getTripId());
             expenseDto.setAllTravelers(tripDto.getTravelers());
             expenseDto.setTripName(tripDto.getName());
             model.addAttribute("tripDto", tripDto);
