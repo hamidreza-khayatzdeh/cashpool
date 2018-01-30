@@ -3,14 +3,8 @@ package com.invia.challenge.cashpool.service.dto;
 import com.invia.challenge.cashpool.model.Expense;
 import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.model.Trip;
-import com.invia.challenge.cashpool.model.TripTravelerRel;
-import com.invia.challenge.cashpool.service.TripService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 /**
  * Created by khayatzadeh on 1/27/2018.
@@ -27,8 +21,19 @@ public class Converter {
 
     public static TravelerDto getTravelerDto(Traveler traveler) {
         TravelerDto travelerDto = new TravelerDto(traveler.getName());
+        return getTravelerDto(traveler, travelerDto);
+    }
+
+    private static TravelerDto getTravelerDto(Traveler traveler, TravelerDto travelerDto) {
         travelerDto.setEmail(traveler.getEmail());
         travelerDto.setId(traveler.getId());
+        return travelerDto;
+    }
+
+    public static TravelerDto getTravelerDto(Traveler traveler, BigDecimal totalSpentAmount) {
+        TravelerDto travelerDto = new TravelerDto(traveler.getName());
+        getTravelerDto(traveler, travelerDto);
+        travelerDto.setTotalSpentAmount(totalSpentAmount);
         return travelerDto;
     }
 

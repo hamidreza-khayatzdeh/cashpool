@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -77,7 +78,7 @@ public class TripService {
         for (ExpenseDto expense : expenses)
             totalCost = totalCost.add(expense.getAmount());
         trip.setTotalCost(totalCost);
-        BigDecimal share = trip.getTotalCost().divide(new BigDecimal(expenses.size()));
+        BigDecimal share = trip.getTotalCost().divide(new BigDecimal(tripDto.getTravelers().size()), RoundingMode.HALF_UP);
         trip.setShare(share);
         tripRepository.save(trip);
         return getTripDto(trip);
@@ -102,7 +103,7 @@ public class TripService {
         TripDto tripDto = Converter.getTripDto(trip);
         if (!CollectionUtils.isEmpty(trip.getTripTravelerRels())) {
             for (TripTravelerRel tripTravelerRel : trip.getTripTravelerRels()) {
-                tripDto.getTravelers().add(Converter.getTravelerDto(tripTravelerRel.getTraveler()));
+                tripDto.getTravelers().add(Converter.getTravelerDto(tripTravelerRel.getTraveler(), tripTravelerRel.getTotalSpentAmount()));
                 tripDto.getExpenses().addAll(getExpenses(tripTravelerRel.getId()));
             }
         }
@@ -152,6 +153,11 @@ public class TripService {
         TripTravelerRel tripTravelerRel = tripTravelerRelRepository.findByTripAndTraveler(trip, traveler);
         Expense expense = new Expense();
         expense.setTripTravelerRel(tripTravelerRel);
+        BigDecimal totalSpentAmount = tripTravelerRel.getTotalSpentAmount() != null ? tripTravelerRel.getTotalSpentAmount() :
+                new BigDecimal(0);
+        totalSpentAmount = totalSpentAmount.add(expenseDto.getAmount());
+        tripTravelerRel.setTotalSpentAmount(totalSpentAmount);
+        tripTravelerRelRepository.save(tripTravelerRel);
         expense.setDescription(expenseDto.getDescription());
         expense.setAmount(expenseDto.getAmount());
         expenseRepository.save(expense);
@@ -159,8 +165,7 @@ public class TripService {
 
 
     public List<ExpenseDto> getExpenses(Long tripTravelerRelId) throws CashpoolBaseException {
-        TripTravelerRel tripTravelerRel = tripTravelerRelRepository.findById(tripTravelerRelId).orElseThrow(
-                () -> new CashpoolBaseException(String.format("The is not TripTravelerRel with id %s", tripTravelerRelId)));
+        TripTravelerRel tripTravelerRel = getTripTravelerRel(tripTravelerRelId);
         List<Expense> expenses = tripTravelerRel.getExpenses();
         List<ExpenseDto> expenseDtoList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(expenses)) {
@@ -170,5 +175,10 @@ public class TripService {
             }
         }
         return expenseDtoList;
+    }
+
+    private TripTravelerRel getTripTravelerRel(Long tripTravelerRelId) throws CashpoolBaseException {
+        return tripTravelerRelRepository.findById(tripTravelerRelId).orElseThrow(
+                () -> new CashpoolBaseException(String.format("The is not TripTravelerRel with id %s", tripTravelerRelId)));
     }
 }

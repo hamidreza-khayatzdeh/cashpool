@@ -49,16 +49,16 @@
                     <table class="table table-striped table-bordered table-list">
                         <thead>
                         <tr>
+                            <th>Id</th>
                             <th>Traveler Name</th>
-                            <th>Amount</th>
-                            <th>Description</th>
+                            <th>Total Spent Amount</th>
                         </tr>
                         </thead>
-                        <tbody th:if="${tripDto.expenses != null}" >
-                        <tr th:each="item : ${tripDto.expenses}">
-                            <td th:text="${item.travelerName}"></td>
-                            <td th:text="${item.amount}"></td>
-                            <td th:text="${item.description}"></td>
+                        <tbody th:if="${tripDto.travelers != null}" >
+                        <tr th:each="item : ${tripDto.travelers}">
+                            <td th:text="${item.id}"></td>
+                            <td th:text="${item.name}"></td>
+                            <td th:text="${item.totalSpentAmount}"></td>
                         </tr>
                         </tbody>
                     </table>

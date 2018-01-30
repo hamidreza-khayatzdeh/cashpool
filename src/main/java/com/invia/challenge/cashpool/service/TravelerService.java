@@ -6,7 +6,6 @@ import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.repository.TravelerRepository;
 import com.invia.challenge.cashpool.service.dto.Converter;
 import com.invia.challenge.cashpool.service.dto.TravelerDto;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
