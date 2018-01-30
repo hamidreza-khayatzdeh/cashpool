@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +61,28 @@ public class TripService {
         }
     }
 
+    public TripDto start(TripDto tripDto) throws CashpoolBaseException {
+        Trip trip = getTripById(tripDto.getId());
+        trip.setStatus(Trip.Status.STARTED);
+        trip.setTotalCost(new BigDecimal(0));
+        tripRepository.save(trip);
+        return getTripDto(trip);
+    }
+
+    public TripDto finish(TripDto tripDto) throws CashpoolBaseException {
+        Trip trip = getTripById(tripDto.getId());
+        trip.setStatus(Trip.Status.FINISHED);
+        List<ExpenseDto> expenses = tripDto.getExpenses();
+        BigDecimal totalCost = tripDto.getTotalCost() == null ? new BigDecimal(0) : tripDto.getTotalCost();
+        for (ExpenseDto expense : expenses)
+            totalCost = totalCost.add(expense.getAmount());
+        trip.setTotalCost(totalCost);
+        BigDecimal share = trip.getTotalCost().divide(new BigDecimal(expenses.size()));
+        trip.setShare(share);
+        tripRepository.save(trip);
+        return getTripDto(trip);
+    }
+
     public List<TripDto> getTrips() {
         List<Trip> trips = tripRepository.findAll();
         List<TripDto> tripDtos = new ArrayList<>();
@@ -72,6 +95,10 @@ public class TripService {
 
     public TripDto getById(Long id) throws CashpoolBaseException {
         Trip trip = getTripById(id);
+        return getTripDto(trip);
+    }
+
+    private TripDto getTripDto(Trip trip) throws CashpoolBaseException {
         TripDto tripDto = Converter.getTripDto(trip);
         if (!CollectionUtils.isEmpty(trip.getTripTravelerRels())) {
             for (TripTravelerRel tripTravelerRel : trip.getTripTravelerRels()) {
@@ -84,7 +111,7 @@ public class TripService {
 
     public TripDto getByLink(String link) throws CashpoolBaseException {
         Trip trip = getTripByLink(link);
-        return Converter.getTripDto(trip);
+        return getTripDto(trip);
     }
 
     @Transactional

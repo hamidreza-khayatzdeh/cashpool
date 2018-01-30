@@ -7,47 +7,29 @@
             </div>
         </div>
         <div class="main-login main-center">
-            <form class="form-horizontal" action="#" th:action="@{'/trip/addExpense'}" th:object="${expenseDto}" method="post">
+            <form class="form-horizontal" action="#" th:action="@{'/trip/start'}" th:object="${expenseDto}" method="post">
                 <input name="tripId" id="tripId" type="hidden" th:value="${expenseDto.tripId}">
+                <input name="amount" id="amount" type="hidden" value="0">
                 <div class="form-group">
-                    <label for="travelers" class="cols-sm-2 control-label">Traveler</label>
+                    <label for="totalCost" class="cols-sm-2 control-label">Total Cost</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <select id="travelers" th:field="*{travelerId}" class="selectpicker" data-width="fit">
-                                <option
-                                        th:each="traveler : *{allTravelers}"
-                                        th:value="${traveler.id}"
-                                        th:text="${traveler.name}"></option>
-                            </select>
+                            <span class="input-group-addon"><i class="fa fa-usd fa" aria-hidden="true"></i></span>
+                            <input readonly th:value="${tripDto.totalCost}" type="text" class="form-control" id="totalCost"/>
                         </div>
-                        <span th:if="${#fields.hasErrors('travelerId')}" th:errors="*{travelerId}"></span>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="amount" class="cols-sm-2 control-label">Amount</label>
+                    <label for="share" class="cols-sm-2 control-label">Share</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input th:value="${expenseDto.amount}" type="text" class="form-control" name="amount" id="amount" placeholder="Enter The Amount"
-                                   th:field="*{amount}"/>
+                            <span class="input-group-addon"><i class="fa fa-usd fa" aria-hidden="true"></i></span>
+                            <input readonly th:value="${tripDto.share}" type="text" class="form-control" id="share"/>
                         </div>
-                        <span th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="amount" class="cols-sm-2 control-label">Description</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input th:value="${expenseDto.description}" type="text" class="form-control" name="description" id="description" placeholder="Enter The Description"
-                                   th:field="*{description}"/>
-                        </div>
-                        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
                     </div>
                 </div>
                 <div class="login-register">
-                    <button class="btn btn-sm btn-primary btn-create" type="submit">Submit</button>
+                    <button class="btn btn-sm btn-primary btn-create" type="submit">Start Trip Again</button>
                 </div>
             </form>
         </div>

@@ -4,6 +4,7 @@ import com.invia.challenge.cashpool.exception.CashpoolBaseException;
 import com.invia.challenge.cashpool.exception.CashpoolWithViewException;
 import com.invia.challenge.cashpool.exception.TripNotFoundException;
 import com.invia.challenge.cashpool.interceptor.Layout;
+import com.invia.challenge.cashpool.model.Trip;
 import com.invia.challenge.cashpool.service.TravelerService;
 import com.invia.challenge.cashpool.service.TripService;
 import com.invia.challenge.cashpool.service.dto.Converter;
@@ -116,32 +117,50 @@ public class TripController extends WebMvcConfigurerAdapter {
             TripDto tripDto = tripService.getByLink(link);
             model.addAttribute("expenseDto", Converter.getExpenseDto(tripDto));
             model.addAttribute("tripDto", tripDto);
-            return "tripLink";
+            if (!Trip.Status.FINISHED.equals(tripDto.getStatus())) {
+                return "tripLink";
+            } else {
+                return "tripFinished";
+            }
         } catch (TripNotFoundException e) {
             throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
         }
     }
 
-    @GetMapping("/expense/{id}")
-    public String expense(@PathVariable(value = "id") Long id, Model model) throws CashpoolBaseException {
-        TripDto tripDto = tripService.getById(id);
-        model.addAttribute("expenseDto", Converter.getExpenseDto(tripDto));
-        model.addAttribute("tripDto", tripDto);
-        return "tripLink";
+    @GetMapping("/finish/{id}")
+    public String finish(@PathVariable(value = "id") Long id) throws CashpoolBaseException {
+        try {
+            TripDto tripDto = tripService.getById(id);
+            if (!Trip.Status.FINISHED.equals(tripDto.getStatus()))
+                tripService.finish(tripDto);
+            return "redirect:/trip/list";
+        } catch (TripNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        }
+    }
+
+    @PostMapping("/start")
+    public String start(@Valid @ModelAttribute ExpenseDto expenseDto) throws CashpoolBaseException {
+        try {
+            TripDto tripDto = tripService.getById(expenseDto.getTripId());
+            if (Trip.Status.FINISHED.equals(tripDto.getStatus()))
+                tripService.start(tripDto);
+            return "redirect:/trip/list";
+        } catch (TripNotFoundException e) {
+            throw new CashpoolWithViewException(CashpoolWithViewException.Error404, e.getMessage(), e.getCause());
+        }
     }
 
     @PostMapping("/addExpense")
     public String addExpense(@Valid @ModelAttribute ExpenseDto expenseDto, BindingResult bindingResult, Model model) throws CashpoolBaseException {
+        TripDto tripDto = tripService.getById(expenseDto.getTripId());
         if (bindingResult.hasErrors()) {
-            TripDto tripDto = tripService.getById(expenseDto.getTripId());
             expenseDto.setAllTravelers(tripDto.getTravelers());
             expenseDto.setTripName(tripDto.getName());
             model.addAttribute("tripDto", tripDto);
             return "tripLink";
         }
         tripService.addExpense(expenseDto);
-        return "redirect:/trip/list";
+        return "redirect:/trip/link/".concat(tripDto.getLink());
     }
-
-
 }

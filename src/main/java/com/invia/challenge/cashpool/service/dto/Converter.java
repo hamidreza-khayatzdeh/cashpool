@@ -38,6 +38,7 @@ public class Converter {
         tripDto.setName(trip.getName());
         tripDto.setLink(trip.getLink());
         tripDto.setStatus(trip.getStatus());
+        tripDto.setShare(trip.getShare());
         tripDto.setTotalCost(trip.getTotalCost());
         return tripDto;
     }

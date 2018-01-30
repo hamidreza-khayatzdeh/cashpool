@@ -27,6 +27,7 @@ public class TripDto implements Serializable {
     private String link;
     private Trip.Status status;
     private BigDecimal totalCost;
+    private BigDecimal share;
     private Set<TravelerDto> travelers = new HashSet<>();
     private List<ExpenseDto> expenses = new ArrayList<>();
 
@@ -75,6 +76,14 @@ public class TripDto implements Serializable {
 
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public BigDecimal getShare() {
+        return share;
+    }
+
+    public void setShare(BigDecimal share) {
+        this.share = share;
     }
 
     public Set<TravelerDto> getTravelers() {

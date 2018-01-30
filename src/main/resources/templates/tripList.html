@@ -23,14 +23,16 @@
                             <th class="hidden-xs">ID</th>
                             <th>Name</th>
                             <th>Retrieval Link</th>
+                            <th>Status</th>
                         </tr>
                         </thead>
                         <tbody th:if="${trips != null}"
                                xmlns:th="http://www.w3.org/1999/xhtml">
                         <tr th:each="item : ${trips}">
                             <td align="center" style="white-space: nowrap;">
-                                <a href="#" th:href="@{'/trip/expense/' + ${item.id}}" class="btn btn-default edit-btn"><em th:id="${item.id}"
-                                                                                                                        class="fa fa-money"></em>
+                                <a href="#" th:href="@{'/trip/finish/' + ${item.id}}" data-title="Are you sure to finished the trip?"
+                                   data-toggle="confirmation" class="btn btn-default edit-btn">
+                                    <em th:id="${item.id}" class="fa fa-money"></em>
                                 <a href="#" th:href="@{'/trip/get/' + ${item.id}}" class="btn btn-default edit-btn"><em th:id="${item.id}"
                                                                                                 class="fa fa-pencil"></em>
                                 </a>
@@ -53,6 +55,7 @@
                                 $("#" + link).html(retrievalLink);
                                 /*]]>*/
                             </script>
+                            <td th:text="${item.status}"></td>
                         </tr>
                         </tbody>
                     </table>
