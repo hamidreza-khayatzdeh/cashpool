@@ -37,7 +37,9 @@ public class Converter {
         getTravelerDto(traveler, travelerDto);
         BigDecimal totalSpentAmount = tripTravelerRel.getTotalSpentAmount() != null ? tripTravelerRel.getTotalSpentAmount() : BigDecimal.ZERO;
         travelerDto.setTotalSpentAmount(totalSpentAmount);
-        travelerDto.setPaymentAmount(tripDto.getShare().subtract(totalSpentAmount));
+        BigDecimal share = tripDto.getShare();
+        if (share != null)
+            travelerDto.setPaymentAmount(share.subtract(totalSpentAmount));
         return travelerDto;
     }
 

@@ -45,10 +45,10 @@ public class TripService {
     @Autowired
     private ExpenseRepository expenseRepository;
 
-    public void persist(TripDto tripDto) {
+    public Long persist(TripDto tripDto) {
         Trip trip = new Trip(tripDto.getName());
         setTripTravelerRels(tripDto, trip);
-        tripRepository.save(trip);
+        return tripRepository.save(trip).getId();
     }
 
     private void setTripTravelerRels(TripDto tripDto, Trip trip) {

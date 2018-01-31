@@ -2,7 +2,8 @@ package com.invia.challenge.cashpool.traveler;
 
 import com.invia.challenge.cashpool.CashpoolApplicationTest;
 import com.invia.challenge.cashpool.model.Traveler;
-import com.invia.challenge.cashpool.repository.TravelerRepository;
+import com.invia.challenge.cashpool.service.TravelerService;
+import com.invia.challenge.cashpool.service.dto.TravelerDto;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +13,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class TravelerControllerTest extends CashpoolApplicationTest {
     public static final String URL_PREFIX = "/rest-api/traveler";
 
     @Autowired
-    private TravelerRepository travelerRepository;
+    private TravelerService travelerService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -62,18 +62,16 @@ public class TravelerControllerTest extends CashpoolApplicationTest {
     @Before
     public void init() {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        travelerRepository.deleteAllInBatch();
-        travelerRepository.save(new Traveler("Max"));
-        travelerRepository.save(new Traveler("Bill"));
-        travelerRepository.save(new Traveler("Martha"));
+        travelerService.persist(new TravelerDto("Max"));
+        travelerService.persist(new TravelerDto("Bill"));
+        travelerService.persist(new TravelerDto("Martha"));
     }
 
     @Test
     public void getAllTravelersTest() throws Exception {
-        mockMvc.perform(get(URL_PREFIX + "/getTrips"))
+        mockMvc.perform(get(URL_PREFIX + "/getAll"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$", hasSize(3)))
                 .andDo(print())
                 .andReturn();
     }

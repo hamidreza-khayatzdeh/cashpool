@@ -22,9 +22,9 @@ public class TravelerService {
     @Autowired
     private TravelerRepository travelerRepository;
 
-    public void persist(TravelerDto travelerDto) {
+    public Long persist(TravelerDto travelerDto) {
         Traveler traveler = Converter.getTraveler(travelerDto);
-        travelerRepository.save(traveler);
+        return travelerRepository.save(traveler).getId();
     }
 
     public List<TravelerDto> getAll() {

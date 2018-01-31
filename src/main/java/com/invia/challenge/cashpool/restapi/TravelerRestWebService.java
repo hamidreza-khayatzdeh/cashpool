@@ -5,6 +5,7 @@ import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.service.TravelerService;
 import com.invia.challenge.cashpool.service.dto.TravelerDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,9 @@ public class TravelerRestWebService {
     }
 
     @GetMapping("/getAll")
-    public List<TravelerDto> getAll() {
-        return travelerService.getAll();
+    public ResponseEntity<TravelerDto> getAll() {
+        List<TravelerDto> travelerDtoList = travelerService.getAll();
+        return new ResponseEntity(travelerDtoList, HttpStatus.OK);
     }
 
     @GetMapping("/getById/{id}")
