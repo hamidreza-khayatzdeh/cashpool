@@ -119,8 +119,19 @@ public class TripService {
     public TripDto update(Long id, TripDto tripDto) throws CashpoolBaseException {
         Trip loadedTrip = getTripById(id);
         loadedTrip.setName(tripDto.getName());
-        tripTravelerRelRepository.deleteByTrip(loadedTrip);
+        Set<TripTravelerRel> tripTravelerRels = loadedTrip.getTripTravelerRels();
+        Set<TravelerDto> removalTravelersDto = new HashSet<>();
+        for (TripTravelerRel tripTravelerRel : tripTravelerRels) {
+            if (!tripDto.getTravelers().contains(Converter.getTravelerDto(tripTravelerRel.getTraveler()))) {
+                if (CollectionUtils.isEmpty(tripTravelerRel.getExpenses())) {
+                    tripTravelerRelRepository.delete(tripTravelerRel.getId());
+                }
+            } else {
+                removalTravelersDto.add(Converter.getTravelerDto(tripTravelerRel.getTraveler()));
+            }
+        }
         loadedTrip.setTripTravelerRels(new HashSet<>());
+        tripDto.getTravelers().removeAll(removalTravelersDto);
         setTripTravelerRels(tripDto, loadedTrip);
         Trip savedTrip = tripRepository.save(loadedTrip);
         return Converter.getTripDto(savedTrip);
