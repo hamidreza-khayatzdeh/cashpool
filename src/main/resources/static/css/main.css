@@ -122,3 +122,22 @@ used to vertically center elements, may need modification if you're not using de
     min-width: 1250px;
 }
 
+.footer {
+    background:#f6f6f6;
+    padding:20px 0;
+    border-top:2px solid orange;
+}
+.widget h2 {
+    cursor:pointer;
+    font-size:18px;
+    font-weight:bold;
+    padding-bottom:5px;
+}
+.footer-bottom {
+    background:#d8d8d8;
+    padding:15px 0;
+    border-top:1px solid #d9d9d9;
+    font-size:11px;
+    color:#777;
+}
+

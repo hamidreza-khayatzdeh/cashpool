@@ -103,7 +103,7 @@ public class TripService {
         TripDto tripDto = Converter.getTripDto(trip);
         if (!CollectionUtils.isEmpty(trip.getTripTravelerRels())) {
             for (TripTravelerRel tripTravelerRel : trip.getTripTravelerRels()) {
-                tripDto.getTravelers().add(Converter.getTravelerDto(tripTravelerRel.getTraveler(), tripTravelerRel.getTotalSpentAmount()));
+                tripDto.getTravelers().add(Converter.getTravelerDto(tripDto, tripTravelerRel));
                 tripDto.getExpenses().addAll(getExpenses(tripTravelerRel.getId()));
             }
         }

@@ -24,6 +24,7 @@ public class TravelerDto implements Serializable {
     @Email
     private String email;
     private BigDecimal totalSpentAmount;
+    private BigDecimal paymentAmount;
 
     public TravelerDto() {
     }
@@ -62,6 +63,14 @@ public class TravelerDto implements Serializable {
 
     public void setTotalSpentAmount(BigDecimal totalSpentAmount) {
         this.totalSpentAmount = totalSpentAmount;
+    }
+
+    public BigDecimal getPaymentAmount() {
+        return paymentAmount;
+    }
+
+    public void setPaymentAmount(BigDecimal paymentAmount) {
+        this.paymentAmount = paymentAmount;
     }
 
     @Override

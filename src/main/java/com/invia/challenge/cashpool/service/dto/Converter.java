@@ -3,6 +3,7 @@ package com.invia.challenge.cashpool.service.dto;
 import com.invia.challenge.cashpool.model.Expense;
 import com.invia.challenge.cashpool.model.Traveler;
 import com.invia.challenge.cashpool.model.Trip;
+import com.invia.challenge.cashpool.model.TripTravelerRel;
 
 import java.math.BigDecimal;
 
@@ -30,10 +31,13 @@ public class Converter {
         return travelerDto;
     }
 
-    public static TravelerDto getTravelerDto(Traveler traveler, BigDecimal totalSpentAmount) {
+    public static TravelerDto getTravelerDto(TripDto tripDto, TripTravelerRel tripTravelerRel) {
+        Traveler traveler = tripTravelerRel.getTraveler();
         TravelerDto travelerDto = new TravelerDto(traveler.getName());
         getTravelerDto(traveler, travelerDto);
+        BigDecimal totalSpentAmount = tripTravelerRel.getTotalSpentAmount() != null ? tripTravelerRel.getTotalSpentAmount() : BigDecimal.ZERO;
         travelerDto.setTotalSpentAmount(totalSpentAmount);
+        travelerDto.setPaymentAmount(tripDto.getShare().subtract(totalSpentAmount));
         return travelerDto;
     }
 

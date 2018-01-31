@@ -52,6 +52,7 @@
                             <th>Id</th>
                             <th>Traveler Name</th>
                             <th>Total Spent Amount</th>
+                            <th>Payment Amount</th>
                         </tr>
                         </thead>
                         <tbody th:if="${tripDto.travelers != null}" >
@@ -59,6 +60,7 @@
                             <td th:text="${item.id}"></td>
                             <td th:text="${item.name}"></td>
                             <td th:text="${item.totalSpentAmount}"></td>
+                            <td th:text="${item.paymentAmount}"></td>
                         </tr>
                         </tbody>
                     </table>
